@@ -21,6 +21,22 @@ const status = ref("");
 const sewa_masuk = ref("");
 const sewa_keluar = ref("");
 const errors = ref([]);
+const mobil = ref([]);
+
+//method fetchDatamobil
+const fetchDatamobil = async () => {
+
+    //fetch data 
+    await api.get('/api/mobil')
+
+        .then(response => {
+            //set response data to state "mobil"
+            mobil.value = response.data.data.data
+            console.log("isi", mobil.value)
+
+        });
+}
+
 
 // Fetch data transaksi berdasarkan ID
 onMounted(async () => {
@@ -32,6 +48,8 @@ onMounted(async () => {
         sewa_masuk.value = data.sewa_masuk
         sewa_keluar.value = data.sewa_keluar
     });
+    fetchDatamobil()
+
 });
 
 // Update data transaksi
@@ -73,8 +91,14 @@ const updateTransaksi = async () => {
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Mobil</label>
-                                <input type="text" class="form-control" v-model="mobil_id">
-                                <div v-if="errors.mobil_id" class="alert alert-danger mt-2">
+                                <select class="form-control" v-model="mobil_id">
+                                    <!-- Loop untuk membuat option dari data mobil -->
+                                    <option v-for="item in mobil" :key="item.id" :value="item.id">
+                                        {{ item.merek }}
+                                    </option>
+                                </select>
+                                <!-- Validasi error jika ada -->
+                                <div v-if="errors.status" class="alert alert-danger mt-2">
                                     <span>{{ errors.mobil_id[0] }}</span>
                                 </div>
                             </div>

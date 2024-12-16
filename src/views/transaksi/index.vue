@@ -8,6 +8,7 @@ import api from '../../api';
 
 //define state
 const transaksi = ref([]);
+const mobil = ref([]);
 
 //method fetchDatatransaksi
 const fetchDatatransaksi = async () => {
@@ -24,11 +25,34 @@ const fetchDatatransaksi = async () => {
         });
 }
 
+
+//method fetchDatamobil
+const fetchDatamobil = async () => {
+
+    //fetch data 
+    await api.get('/api/mobil')
+
+        .then(response => {
+            //set response data to state "mobil"
+            mobil.value = response.data.data.data
+            console.log("isi", mobil.value)
+
+        });
+}
+
+// Fungsi untuk mendapatkan nama mobil berdasarkan mobil_id
+const getMobilName = (mobil_id) => {
+    const mobilItem = mobil.value.find(item => item.id === mobil_id);
+    console.log("Isi", mobilItem.merek)
+    return mobilItem ? mobilItem.merek : 'Unknown';
+};
+
 //run hook "onMounted"
 onMounted(() => {
 
     //call method "fetchDatatransaksi"
     fetchDatatransaksi();
+    fetchDatamobil()
 });
 
 //method deletetransaksi
@@ -74,9 +98,8 @@ const deleteTransaksi = async (id) => {
                                     </td>
                                 </tr>
                                 <tr v-else v-for="(transaksi, index) in transaksi" :key="index">
-
                                     <td>{{ transaksi.name }}</td>
-                                    <td>{{ transaksi.mobil_id }}</td>
+                                    <td>{{ getMobilName(transaksi.mobil_id) }}</td>
                                     <td>{{ transaksi.status }}</td>
                                     <td>{{ transaksi.sewa_masuk }}</td>
                                     <td>{{ transaksi.sewa_keluar }}</td>
